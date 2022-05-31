@@ -1,0 +1,33 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: ksqldb-cli
+  namespace: ersin-test  
+labels:
+  deployment: ksqldb-cli
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: ksqldb-cli
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        deployment: ksqldb-cli
+    spec:
+      volumes:
+        - name: generic
+          persistentVolumeClaim:
+            claimName: generic
+        - name: empty1
+          emptyDir: {}
+      enableServiceLinks: false
+      containers:
+        - resources: {}
+          name: ksqldb-cli 
+          volumeMounts: 
+            - name: empty1
+              mountPath: /var/log/ksqldb-cli/
+          image: >-
+            confluentinc/cp-ksqldb-cli:7.0.1
