@@ -1,0 +1,22 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: rest-proxy
+  namespace: ersin-test 
+  annotations:
+    generated.by: ersingulbahar 
+spec:
+  ports:
+    - name: 8082-tcp
+      protocol: TCP
+      port: 8082
+      targetPort: 8082
+  selector:
+    deployment: rest-proxy
+  type: ClusterIP
+  sessionAffinity: None
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+status:
+  loadBalancer: {} 
