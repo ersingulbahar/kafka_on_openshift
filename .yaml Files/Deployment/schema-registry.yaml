@@ -1,0 +1,40 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: schema-registry
+  namespace: aias-playground  
+labels:
+  deployment: schema-registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: schema-registry
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        deployment: schema-registry
+    spec:
+      volumes:
+        - name: generic
+          persistentVolumeClaim:
+            claimName: generic
+        - name: empty1
+          emptyDir: {}
+      enableServiceLinks: false
+      containers:
+        - resources: {}
+          name: schema-registry
+          env: 
+            - name: SCHEMA_REGISTRY_HOST_NAME
+              value: schema-registry
+            - name: SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS
+              value: broker:29092
+            - name: SCHEMA_REGISTRY_LISTENERS
+              value: 'http://0.0.0.0:8081'
+          ports:
+            - containerPort: 8081
+              protocol: TCP 
+          image: >-
+            confluentinc/cp-schema-registry:7.0.1 
