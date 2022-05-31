@@ -1,0 +1,60 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: ksqldb-server
+  namespace: ersin-test  
+labels:
+  deployment: ksqldb-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: ksqldb-server
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        deployment: ksqldb-server
+    spec:
+      volumes:
+        - name: generic
+          persistentVolumeClaim:
+            claimName: generic
+        - name: empty1
+          emptyDir: {}
+      enableServiceLinks: false
+      containers:
+        - resources: 
+            limits:
+              memory: 1Gi
+          name: ksqldb-server
+          env: 
+            - name: KSQL_CONFIG_DIR
+              value: /etc/ksql
+            - name: KSQL_BOOTSTRAP_SERVERS
+              value: broker:29092
+            - name: KSQL_HOST_NAME
+              value: ksqldb-server
+            - name: KSQL_LISTENERS
+              value: http://0.0.0.0:8088
+            - name: KSQL_CACHE_MAX_BYTES_BUFFERING
+              value: '0'
+            - name: KSQL_KSQL_SCHEMA_REGISTRY_URL
+              value: http://schema-registry:8081
+            - name: KSQL_PRODUCER_INTERCEPTOR_CLASSES
+              value: io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor
+            - name: KSQL_CONSUMER_INTERCEPTOR_CLASSES
+              value: io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor
+            - name: KSQL_KSQL_CONNECT_URL
+              value: http://connect:8083
+            - name: KSQL_KSQL_LOGGING_PROCESSING_TOPIC_REPLICATION_FACTOR
+              value: '1'
+            - name: KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE
+              value: 'true'
+            - name: KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE
+              value: 'true'
+          ports:
+            - containerPort: 8088
+              protocol: TCP 
+          image: >-
+            confluentinc/cp-ksqldb-server:7.0.1 
