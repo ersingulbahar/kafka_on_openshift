@@ -1,0 +1,22 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: zookeeper
+  namespace: ersin-test
+  annotations:
+    generated.by: ersingulbahar
+spec:
+  ports:
+    - name: 2181-tcp
+      protocol: TCP
+      port: 2181
+      targetPort: 2181
+  selector:
+    deployment: zookeeper
+  type: ClusterIP
+  sessionAffinity: None
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+status:
+  loadBalancer: {}
