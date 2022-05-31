@@ -1,0 +1,41 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: zookeeper
+  namespace: aias-playground  
+labels:
+  deployment: zookeeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: zookeeper
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        deployment: zookeeper
+    spec:
+      volumes:
+        - name: generic
+          persistentVolumeClaim:
+            claimName: generic
+        - name: empty1
+          emptyDir: {}
+      containers:
+        - resources: {}
+          name: zookeeper
+          env:
+            - name: ZOOKEEPER_CLIENT_PORT
+              value: '2181'
+            - name: ZOOKEEPER_TICK_TIME
+              value: '2000'
+          ports:
+            - containerPort: 2181
+              protocol: TCP
+          volumeMounts:
+            - name: generic
+              mountPath: /var/log/kafka/
+          image: >-
+            confluentinc/cp-zookeeper:7.0.1
+          hostname: zookeeper
