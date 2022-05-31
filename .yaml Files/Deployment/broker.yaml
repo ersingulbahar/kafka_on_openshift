@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 metadata:
   name: broker
-  namespace: aias-playground
+  namespace: ersin-test
 labels:
   deployment: broker
 spec:
