@@ -1,0 +1,22 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ksqldb-server
+  namespace: ersin-test 
+  annotations:
+    generated.by: ersingulbahar 
+spec:
+  ports:
+    - name: 8088-tcp
+      protocol: TCP
+      port: 8088
+      targetPort: 8088
+  selector:
+    deployment: ksqldb-server
+  type: ClusterIP
+  sessionAffinity: None
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+status:
+  loadBalancer: {}
