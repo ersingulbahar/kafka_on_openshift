@@ -1,0 +1,42 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: rest-proxy
+  namespace: ersin-test 
+labels:
+  deployment: rest-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: rest-proxy
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        deployment: rest-proxy
+    spec:
+      volumes:
+        - name: generic
+          persistentVolumeClaim:
+            claimName: generic
+        - name: empty1
+          emptyDir: {}
+      enableServiceLinks: false
+      containers:
+        - resources: {}
+          name: rest-proxy
+          env: 
+            - name: KAFKA_REST_HOST_NAME
+              value: rest-proxy
+            - name: KAFKA_REST_BOOTSTRAP_SERVERS
+              value: broker:29092
+            - name: KAFKA_REST_LISTENERS
+              value: http://0.0.0.0:8082
+            - name: KAFKA_REST_SCHEMA_REGISTRY_URL
+              value: http://schema-registry:8081
+          ports:
+            - containerPort: 8082
+              protocol: TCP 
+          image: >-
+            confluentinc/cp-kafka-rest:7.0.1
