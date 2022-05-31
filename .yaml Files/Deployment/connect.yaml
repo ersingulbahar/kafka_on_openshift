@@ -1,0 +1,71 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: connect
+  namespace: aias-playground  
+labels:
+  deployment: connect
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: connect
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        deployment: connect
+    spec:
+      volumes:
+        - name: generic
+          persistentVolumeClaim:
+            claimName: generic
+        - name: empty1
+          emptyDir: {}
+      containers:
+        - resources:
+            limits:
+              memory: 2Gi
+          name: connect
+          env: 
+            - name: CONNECT_BOOTSTRAP_SERVERS
+              value: broker:29092
+            - name: CONNECT_REST_ADVERTISED_HOST_NAME
+              value: connect
+            - name: CONNECT_REST_PORT
+              value: '8083'
+            - name: CONNECT_GROUP_ID
+              value: compose-connect-group
+            - name: CONNECT_CONFIG_STORAGE_TOPIC
+              value: docker-connect-configs
+            - name: CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR
+              value: '1'
+            - name: CONNECT_OFFSET_FLUSH_INTERVAL_MS
+              value: '10000'
+            - name: CONNECT_OFFSET_STORAGE_TOPIC
+              value: docker-connect-offsets
+            - name: CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR
+              value: '1'
+            - name: CONNECT_STATUS_STORAGE_TOPIC
+              value: docker-connect-status
+            - name: CONNECT_STATUS_STORAGE_REPLICATION_FACTOR
+              value: '1'
+            - name: CONNECT_KEY_CONVERTER
+              value: org.apache.kafka.connect.storage.StringConverter
+            - name: CONNECT_VALUE_CONVERTER
+              value: io.confluent.connect.avro.AvroConverter
+            - name: CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL
+              value: http://schema-registry:8081
+            - name: CLASSPATH
+              value: /usr/share/java/monitoring-interceptors/monitoring-interceptors-7.0.1.jar
+            - name: CONNECT_PRODUCER_INTERCEPTOR_CLASSES
+              value: io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor
+            - name: CONNECT_CONSUMER_INTERCEPTOR_CLASSES
+              value: io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor
+            - name: CONNECT_PLUGIN_PATH
+              value: /usr/share/java,/usr/share/confluent-hub-components
+          ports:
+            - containerPort: 8083
+              protocol: TCP 
+          image: >-
+            cnfldemos/cp-server-connect-datagen:0.5.0-6.2.0
