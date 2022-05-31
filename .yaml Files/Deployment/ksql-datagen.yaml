@@ -1,0 +1,47 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: ksql-datagen
+  namespace: ersin-test  
+labels:
+  deployment: ksql-datagen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: ksql-datagen
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        deployment: ksql-datagen
+    spec:
+      volumes:
+        - name: generic
+          persistentVolumeClaim:
+            claimName: generic
+        - name: empty1
+          emptyDir: {}
+      enableServiceLinks: false
+      containers:
+        - resources: {}
+          name: ksql-datagen  
+          env: 
+            - name: KSQL_CONFIG_DIR
+              value: /etc/ksql
+            - name: STREAMS_BOOTSTRAP_SERVERS
+              value: broker:29092
+            - name: STREAMS_SCHEMA_REGISTRY_HOST
+              value: schema-registry
+            - name: STREAMS_SCHEMA_REGISTRY_PORT
+              value: '8081'
+          command:
+            - "bash -c 'echo Waiting for Kafka to be ready... && \
+                       cub kafka-ready -b broker:29092 1 40 && \
+                       echo Waiting for Confluent Schema Registry to be ready... && \
+                       cub sr-ready schema-registry 8081 40 && \
+                       echo Waiting a few seconds for topic creation to finish... && \
+                       sleep 11 && \
+                       tail -f /dev/null'"    
+          image: >-
+            confluentinc/ksqldb-examples:7.0.1
