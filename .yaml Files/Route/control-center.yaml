@@ -1,0 +1,13 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: control-center
+  namespace: ersin-test
+spec:
+  to:
+    kind: Service
+    name: control-center
+    weight: 100
+  port:
+    targetPort: 9021-tcp
+  wildcardPolicy: None 
