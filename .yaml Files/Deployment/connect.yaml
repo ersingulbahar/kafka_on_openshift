@@ -2,7 +2,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: connect
-  namespace: aias-playground  
+  namespace: ersin-test 
 labels:
   deployment: connect
 spec:
