@@ -1,0 +1,22 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: control-center
+  namespace: ersin-test
+  annotations:
+    generated.by: ersingulbahar 
+spec:
+  ports:
+    - name: 9021-tcp
+      protocol: TCP
+      port: 9021
+      targetPort: 9021
+  selector:
+    deployment: control-center
+  type: ClusterIP
+  sessionAffinity: None
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+status:
+  loadBalancer: {}
