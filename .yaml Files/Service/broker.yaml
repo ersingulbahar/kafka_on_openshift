@@ -1,0 +1,30 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: broker
+  namespace: ersin-test
+  annotations:
+    generated.by: ersingulbahar 
+spec:
+  ports:
+    - name: 9092-tcp
+      protocol: TCP
+      port: 9092
+      targetPort: 9092
+    - name: 9101-tcp
+      protocol: TCP
+      port: 9101
+      targetPort: 9101
+    - name: 29092-tcp
+      protocol: TCP
+      port: 29092
+      targetPort: 29092
+  selector:
+    deployment: broker
+  type: ClusterIP
+  sessionAffinity: None
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+status:
+  loadBalancer: {}
